@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="description" content="LOGIC — Hassas Hesap Makinesi"/>
+  <meta name="theme-color" content="#06080F"/>
+  <title>LOGIC</title>
+  <link rel="stylesheet" href="css/style.css"/>
+</head>
+<body>
+
+<!-- Scanlines overlay (Cipher style) -->
+<div class="scanlines"></div>
+
+<!-- History panel overlay -->
+<div id="history-panel">
+  <div class="hist-box">
+    <div class="hist-head">
+      <span class="title">// GEÇMİŞ</span>
+      <div style="display:flex;gap:7px;">
+        <button class="hist-close" id="hist-clear" title="Temizle">AC</button>
+        <button class="hist-close" id="hist-close">✕ KAPAT</button>
+      </div>
+    </div>
+    <div class="hist-list" id="hist-list">
+      <div class="hist-empty">// KAYIT YOK</div>
+    </div>
+  </div>
+</div>
+
+<!-- App shell -->
+<div id="app" class="grid-bg">
+  <div style="display:flex;flex-direction:column;align-items:center;">
+
+    <!-- Brand -->
+    <div id="brand">
+      <h1>LOGIC</h1>
+      <div class="tagline">HASSAS · ANALİTİK · KESİN</div>
+    </div>
+
+    <!-- Calculator card -->
+    <div class="calc-card">
+      <div class="c-br"></div>
+      <div class="c-bl"></div>
+
+      <!-- Status bar -->
+      <div class="status-bar">
+        <div class="status-left">
+          <div class="status-dot"></div>
+          SYS_ACTIVE
+        </div>
+        <div style="display:flex;align-items:center;gap:7px;">
+          <button class="mode-badge" id="mode-badge" onclick="Logic.toggleSciMode()" title="Mod değiştir (S)">STD_MODE</button>
+          <button
+            id="btn-history"
+            style="font-family:var(--font-mono);font-size:.58rem;background:var(--elev);border:1px solid var(--border);color:var(--muted);padding:2px 9px;border-radius:6px;cursor:pointer;letter-spacing:.1em;transition:all .12s;"
+            title="Geçmiş (H)"
+          >HİSTORY</button>
+          <button
+            id="btn-theme"
+            style="font-size:.85rem;background:var(--elev);border:1px solid var(--border);color:var(--muted);padding:2px 8px;border-radius:6px;cursor:pointer;transition:all .12s;"
+            title="Tema">☀</button>
+        </div>
+      </div>
+
+      <!-- Display -->
+      <div class="display">
+        <div class="disp-history" id="disp-history"></div>
+        <div class="disp-expr"    id="disp-expr"></div>
+        <div class="disp-value"   id="disp-value">0</div>
+      </div>
+
+      <!-- Scientific panel (hidden by default) -->
+      <div id="sci-panel" style="display:none;grid-template-columns:repeat(4,1fr);gap:7px;margin-bottom:7px;">
+        <button class="btn fn" onclick="Logic.calcFn('sin')">SIN</button>
+        <button class="btn fn" onclick="Logic.calcFn('cos')">COS</button>
+        <button class="btn fn" onclick="Logic.calcFn('tan')">TAN</button>
+        <button class="btn fn" onclick="Logic.calcFn('sqrt')">√x</button>
+        <button class="btn fn" onclick="Logic.calcFn('asin')">SIN⁻¹</button>
+        <button class="btn fn" onclick="Logic.calcFn('acos')">COS⁻¹</button>
+        <button class="btn fn" onclick="Logic.calcFn('atan')">TAN⁻¹</button>
+        <button class="btn fn" onclick="Logic.calcFn('cbrt')">∛x</button>
+        <button class="btn fn" onclick="Logic.calcFn('log')">LOG</button>
+        <button class="btn fn" onclick="Logic.calcFn('ln')">LN</button>
+        <button class="btn fn" onclick="Logic.calcFn('exp')">eˣ</button>
+        <button class="btn fn" onclick="Logic.powerOp()">xʸ</button>
+        <button class="btn fn" onclick="Logic.calcFn('sq')">x²</button>
+        <button class="btn fn" onclick="Logic.calcFn('inv')">1/x</button>
+        <button class="btn fn" onclick="Logic.calcFn('fact')">n!</button>
+        <button class="btn fn" onclick="Logic.calcFn('abs')">|x|</button>
+        <button class="btn fn" onclick="Logic.insertConst('pi')">π</button>
+        <button class="btn fn" onclick="Logic.insertConst('e')">e</button>
+        <button class="btn fn" onclick="Logic.insertConst('phi')">φ</button>
+        <button class="btn fn" onclick="Logic.insertConst('tau')">τ</button>
+      </div>
+
+      <!-- Main button grid -->
+      <div class="btn-grid">
+
+        <!-- Row 1 -->
+        <button class="btn clear"   onclick="Logic.clearAll()">AC</button>
+        <button class="btn fn"      onclick="Logic.toggleSign()">+/−</button>
+        <button class="btn fn"      onclick="Logic.percentage()">%</button>
+        <button class="btn op"      onclick="Logic.appendOp('÷')">÷</button>
+
+        <!-- Row 2 -->
+        <button class="btn"         onclick="Logic.appendNum('7')">7</button>
+        <button class="btn"         onclick="Logic.appendNum('8')">8</button>
+        <button class="btn"         onclick="Logic.appendNum('9')">9</button>
+        <button class="btn op"      onclick="Logic.appendOp('×')">×</button>
+
+        <!-- Row 3 -->
+        <button class="btn"         onclick="Logic.appendNum('4')">4</button>
+        <button class="btn"         onclick="Logic.appendNum('5')">5</button>
+        <button class="btn"         onclick="Logic.appendNum('6')">6</button>
+        <button class="btn op"      onclick="Logic.appendOp('−')">−</button>
+
+        <!-- Row 4 -->
+        <button class="btn"         onclick="Logic.appendNum('1')">1</button>
+        <button class="btn"         onclick="Logic.appendNum('2')">2</button>
+        <button class="btn"         onclick="Logic.appendNum('3')">3</button>
+        <button class="btn op"      onclick="Logic.appendOp('+')">+</button>
+
+        <!-- Row 5 -->
+        <button class="btn fn"      onclick="Logic.backspace()">⌫</button>
+        <button class="btn"         onclick="Logic.appendNum('0')">0</button>
+        <button class="btn"         onclick="Logic.appendDot()">.</button>
+        <button class="btn equals"  onclick="Logic.calculate()">=</button>
+
+      </div>
+
+      <!-- Footer -->
+      <div class="calc-footer">
+        <div>
+          <span class="enc-badge">64-BIT</span>
+          PRECISION
+        </div>
+        <span>LOGIC v1.0</span>
+      </div>
+    </div>
+
+    <!-- Keyboard hint -->
+    <div id="kb-hint">⌨ KLAVYE DESTEĞİ AKTİF &nbsp;·&nbsp; [S] SCI &nbsp;·&nbsp; [H] GEÇMİŞ</div>
+
+  </div>
+</div>
+
+<script src="js/engine.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
